@@ -1,4 +1,0 @@
-username:admin
-password:admin123
-credit:243
-date_created:2025-07-01 22:44:43
