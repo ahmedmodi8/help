@@ -1,0 +1,4 @@
+username:modiri
+password:modiri123
+credit:500
+date_created:2025-06-30 16:38:20
