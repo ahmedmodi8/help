@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>كيفية استخدام Flash CPE Tools لتفليش راوتر CPE</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Cairo", Arial, sans-serif;
+        line-height: 1.8;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        direction: rtl;
+        text-align: right;
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(45deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        color: #34495e;
+        margin: 30px 0 15px 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        padding: 15px 20px;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 15px;
+        border-right: 5px solid #667eea;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      }
+
+      p {
+        margin: 15px 0;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #555;
+      }
+
+      code {
+        background: #f8f9fa;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-family: "Courier New", monospace;
+        color: #e74c3c;
+        font-weight: 600;
+      }
+
+      img {
+        width: 100%;
+        max-width: 600px;
+        height: 400px;
+        object-fit: cover;
+        display: block;
+        margin: 25px auto;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 3px solid #fff;
+      }
+
+      img:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      .step {
+        margin-bottom: 50px;
+        padding: 25px;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e9ecef;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .step:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+      }
+
+      .note {
+        background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+        border-right: 6px solid #2196f3;
+        padding: 20px;
+        margin: 30px 0;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(33, 150, 243, 0.15);
+        font-weight: 500;
+      }
+
+      .note strong {
+        color: #1976d2;
+        font-size: 1.1rem;
+      }
+
+      .download-btn {
+        display: inline-block;
+        margin: 15px 10px;
+        padding: 15px 30px;
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+        font-size: 1.1rem;
+      }
+
+      .download-btn:hover {
+        background: linear-gradient(135deg, #218838, #1ea085);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(40, 167, 69, 0.4);
+      }
+
+      .success-section {
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        border: 2px solid #28a745;
+        border-radius: 20px;
+        padding: 30px;
+        text-align: center;
+        margin: 40px 0;
+        box-shadow: 0 10px 30px rgba(40, 167, 69, 0.15);
+      }
+
+      .success-section h2 {
+        color: #155724;
+        font-size: 2rem;
+        margin-bottom: 20px;
+        background: none;
+        border: none;
+        box-shadow: none;
+      }
+
+      .phone-section {
+        background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+        border: 2px solid #ffc107;
+        border-radius: 20px;
+        padding: 25px;
+        margin: 30px 0;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(255, 193, 7, 0.2);
+      }
+
+      /* تحسينات للأجهزة المحمولة */
+      @media (max-width: 768px) {
+        .container {
+          margin: 10px;
+          padding: 15px;
+          border-radius: 15px;
+        }
+
+        h1 {
+          font-size: 1.8rem;
+          margin-bottom: 20px;
+        }
+
+        h2 {
+          font-size: 1.3rem;
+          padding: 12px 15px;
+        }
+
+        p {
+          font-size: 1rem;
+        }
+
+        img {
+          height: 250px;
+          margin: 20px auto;
+        }
+
+        .step {
+          padding: 20px;
+          margin-bottom: 30px;
+        }
+
+        .download-btn {
+          display: block;
+          margin: 10px auto;
+          text-align: center;
+          width: 90%;
+          max-width: 300px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          margin: 5px;
+          padding: 10px;
+        }
+
+        h1 {
+          font-size: 1.5rem;
+        }
+
+        img {
+          height: 200px;
+        }
+
+        .step {
+          padding: 15px;
+        }
+      }
+
+      /* تأثيرات إضافية */
+      .step-number {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 40px;
+        font-weight: bold;
+        margin-left: 10px;
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        animation: pulse 2s infinite;
+      }
+
+      .warning {
+        background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+        border-right: 6px solid #ffc107;
+        padding: 20px;
+        margin: 25px 0;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(255, 193, 7, 0.15);
+        animation: shake 0.5s ease-in-out;
+      }
+
+      .warning strong {
+        color: #856404;
+        font-size: 1.1rem;
+      }
+
+      /* تأثيرات الحركة */
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        75% {
+          transform: translateX(5px);
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .step {
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      /* تحسين الألوان والظلال */
+      .container::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent,
+          rgba(102, 126, 234, 0.1),
+          transparent
+        );
+        animation: rotate 20s linear infinite;
+        z-index: -1;
+      }
+
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .container {
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* تحسين شكل الأزرار */
+      .download-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .download-btn:hover::before {
+        left: 100%;
+      }
+
+      .download-btn {
+        position: relative;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🔧 كيفية استخدام برنامج Flash CPE Tools لتفليش راوتر CPE</h1>
+      <div class="note">
+        <p>
+          <strong>مرحباً بك في الدليل الشامل!</strong> في هذا الدليل، سنشرح
+          بالتفصيل كيفية استخدام برنامج <code>Flash CPE Tools</code> لتفليش
+          راوتر CPE. يرجى اتباع الخطوات بعناية لضمان نجاح العملية.
+        </p>
+      </div>
+
+      <div class="step">
+        <h2><span class="step-number">1</span>الخطوة 1: فتح البرنامج</h2>
+        <p>
+          ابدأ بفتح برنامج <code>Flash CPE Tools</code> على جهاز الكمبيوتر الخاص
+          بك. تأكد من أن البرنامج مثبت بشكل صحيح.
+        </p>
+        <img src="./assets/login1.png" alt="فتح البرنامج" />
+      </div>
+
+      <div class="step">
+        <h2>
+          <span class="step-number">2</span>الخطوة 2: تسجيل الدخول إلى البرنامج
+        </h2>
+        <p>
+          قم بإدخال بيانات تسجيل الدخول الخاصة بك في البرنامج. تأكد من صحة
+          البيانات للمتابعة.
+        </p>
+        <img src="./assets/login2.png" alt="تسجيل الدخول" />
+      </div>
+
+      <div class="step">
+        <h2>
+          <span class="step-number">3</span>الخطوة 3: التأكد من وجود الإنترنت
+          عبر الواي فاي
+        </h2>
+        <p>
+          تحقق من أن الحاسوب متصل بالإنترنت عبر الواي فاي. يمكنك رؤية حالة
+          الاتصال في البرنامج.
+        </p>
+        <img src="./assets/home.png" alt="التحقق من الإنترنت" />
+      </div>
+
+      <div class="step">
+        <h2>
+          <span class="step-number">4</span>الخطوة 4: إيقاف التيار عن الراوتر
+        </h2>
+        <p>افصل سلك الطاقة عن الراوتر CPE لإيقاف التيار عنه.</p>
+        <img src="./assets/RG45 remove.png" alt="إيقاف التيار" />
+        <img src="./assets/RG45 remove1.png" alt="إيقاف التيار" />
+      </div>
+
+      <div class="step">
+        <h2>
+          <span class="step-number">5</span>الخطوة 5: الضغط على زر إعادة ضبط
+          المصنع
+        </h2>
+        <p>
+          اضغط على زر إعادة ضبط المصنع في الراوتر واستمر في الضغط عليه. قد تحتاج
+          إلى أداة صغيرة للوصول إليه.
+        </p>
+        <img src="./assets/port resset.png" alt="الضغط على زر إعادة الضبط" />
+        <img src="./assets/botton resset.png" alt="الضغط على زر إعادة الضبط" />
+      </div>
+
+      <div class="step">
+        <h2>
+          <span class="step-number">6</span>الخطوة 6: توصيل التيار مع الاستمرار
+          في الضغط
+        </h2>
+        <p>
+          أعد توصيل سلك الطاقة بالراوتر مع الاستمرار في الضغط على زر إعادة ضبط
+          المصنع.
+        </p>
+        <img src="./assets/RG45 remove.png" alt="توصيل التيار" />
+      </div>
+
+      <div class="step">
+        <h2>
+          <span class="step-number">7</span>الخطوة 7: الانتظار حتى تظهر لمبة
+          اللون الأحمر
+        </h2>
+        <p>
+          استمر في الضغط حتى تظهر لمبة إشارة اللون الأحمر على الراوتر، مما يعني
+          أن الأمر جيد.
+        </p>
+        <img src="./assets/green-lambe.png" alt="لمبة اللون الأخضر" />
+        <img src="./assets/yellow-lambe.png" alt="لمبة اللون الأصفر" />
+        <img src="./assets/red-lambe.png" alt="لمبة اللون الأحمر" />
+      </div>
+
+      <div class="step">
+        <h2>
+          <span class="step-number">8</span>الخطوة 8: إزالة الإصبع عن زر إعادة
+          الضبط
+        </h2>
+        <p>
+          عند ظهور اللون الأحمر الذي يؤشر، أزل إصبعك عن زر إعادة ضبط المصنع
+          واترك الجهاز يقلع.
+        </p>
+        <img src="./assets/red-lambe.png" alt="إزالة الإصبع" />
+      </div>
+
+      <div class="step">
+        <h2>
+          <span class="step-number">9</span>الخطوة 9: الانتظار حتى يظهر اللون
+          الأحمر الثابت
+        </h2>
+        <p>
+          انتظر حتى تظهر لمبة إشارة اللون الأحمر الثابت الذي لا يومض على الراوتر
+          CPE، مما يشير إلى استعداده.
+        </p>
+        <img src="./assets/red-lambe.png" alt="لمبة اللون الأحمر" />
+      </div>
+
+      <div class="step">
+        <div class="warning">
+          <h2>
+            <span class="step-number">⚠️</span>تحذير مهم: هذه الخطوة خطيرة
+          </h2>
+          <p>
+            <strong
+              >احرص في هذه الخطوة أن لا يتم نزع كابل RG45 أو انقطاع الكهرباء قد
+              يتلف الجهاز نهائياً!</strong
+            >
+          </p>
+        </div>
+        <img src="./assets/home.png" alt="التحقق من الإنترنت" />
+      </div>
+
+      <div class="step">
+        <h2>
+          <span class="step-number">10</span>الخطوة 10: التأكد من وجود الإنترنت
+          والضغط على زر التحديث
+        </h2>
+        <p>
+          تحقق من أن الحاسوب متصل بالإنترنت عبر الواي فاي. يمكنك رؤية حالة
+          الاتصال في البرنامج واضغط زر الانتقال إلى صفحة التحديث.
+        </p>
+        <img src="./assets/go update.png" alt="الضغط على زر التحديث" />
+      </div>
+
+      <div class="success-section">
+        <h2>🎉 تهانينا! تم إنجاز العملية بنجاح</h2>
+        <p>
+          بعد اكتمال العملية 100% يكون قد تم تحديث الراوتر
+          <strong>CPE ORANGE MAROC</strong> بنجاح، ويمكن الآن تشغيل جميع بطاقات
+          SIM.
+        </p>
+
+        <a
+          href="https://t.me/c/2754207554/4"
+          class="download-btn"
+          target="_blank"
+        >
+          📱 تحميل من تيليجرام
+        </a>
+        <a
+          href="https://whatsapp.com/channel/0029VbBPdSVChq6OK50pwB1f"
+          class="download-btn"
+          target="_blank"
+        >
+          💬 مجموعة واتساب
+        </a>
+      </div>
+
+      <div class="phone-section">
+        <h2>📞 للحصول على اسم المستخدم وكلمة المرور</h2>
+        <p>
+          للحصول على اسم المستخدم أو كلمة المرور الخاصة بك تواصل معي على الهاتف.
+        </p>
+        <img src="./assets/phone.png" alt="معلومات الاتصال" />
+      </div>
+
+      <div class="note">
+        <p>
+          <strong>ملاحظة:</strong> لا تقطع التيار أو تُوقف البرنامج أثناء
+          التفليش لتجنب إتلاف الراوتر.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
